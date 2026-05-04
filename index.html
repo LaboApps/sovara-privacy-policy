@@ -29,6 +29,7 @@
   .perm-name { color: #f78166; font-family: monospace; font-size: 0.9rem; margin-bottom: 6px; }
   .highlight { background: #21262d; border-left: 3px solid #3fb950; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; }
   .content[dir="rtl"] .highlight { border-left: none; border-right: 3px solid #3fb950; border-radius: 8px 0 0 8px; }
+  code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; color: #f78166; }
   footer { text-align: center; padding: 24px; color: #8b949e; font-size: 0.8rem; border-top: 1px solid #30363d; margin-top: 40px; }
 </style>
 </head>
@@ -51,16 +52,16 @@
 </header>
 
 <div class="tabs">
-  <div class="tab active" onclick="showTab('en')">English</div>
-  <div class="tab" onclick="showTab('fr')">Français</div>
-  <div class="tab" onclick="showTab('de')">Deutsch</div>
-  <div class="tab" onclick="showTab('es')">Español</div>
-  <div class="tab" onclick="showTab('ar')">العربية</div>
+  <div class="tab active" onclick="showTab('en', event)">English</div>
+  <div class="tab" onclick="showTab('fr', event)">Français</div>
+  <div class="tab" onclick="showTab('de', event)">Deutsch</div>
+  <div class="tab" onclick="showTab('es', event)">Español</div>
+  <div class="tab" onclick="showTab('ar', event)">العربية</div>
 </div>
 
 <!-- ENGLISH -->
 <div id="tab-en" class="content active">
-  <p style="color:#8b949e;margin-top:16px;font-size:0.85rem">Last updated: April 2026</p>
+  <p style="color:#8b949e;margin-top:16px;font-size:0.85rem">Last updated: May 4, 2026 — all crash reporting and third-party SDKs removed</p>
 
   <div class="highlight">Sovara works 100% offline. No internet connection is ever used. No account required. No server. No cloud. Your data never leaves your device — ever.</div>
 
@@ -92,7 +93,8 @@
 
   <div class="perm">
     <div class="perm-name">RECORD_AUDIO</div>
-    <p>Used only to detect when another application accesses the microphone. Sovara never records, processes, or stores any audio content.</p>
+    <p>Used <strong>exclusively to detect WHEN another application is accessing the microphone</strong>. Sovara never opens an audio recording stream, never captures audio data, and never processes audio content. We use this permission solely to query the system about microphone activity status.</p>
+    <p>You can verify this independently: Sovara's APK contains no calls to <code>MediaRecorder.start()</code>, <code>AudioRecord.read()</code>, or any audio capture method. The permission is required by Android because querying microphone state from a background service falls under audio permissions, even when no audio is captured.</p>
   </div>
 
   <div class="perm">
@@ -143,12 +145,13 @@
 
 <!-- FRANÇAIS -->
 <div id="tab-fr" class="content">
-  <p style="color:#8b949e;margin-top:16px;font-size:0.85rem">Dernière mise à jour : avril 2026</p>
+  <p style="color:#8b949e;margin-top:16px;font-size:0.85rem">Dernière mise à jour : 4 mai 2026 — suppression de tout reporting de crash et SDK tiers</p>
 
   <div class="highlight">Sovara fonctionne 100% hors ligne. Aucune connexion internet n'est jamais utilisée. Aucun compte requis. Aucun serveur. Aucun cloud. Vos données ne quittent jamais votre appareil.</div>
 
   <h2>1. Présentation</h2>
   <p>Sovara est une application Android locale qui surveille l'accès au microphone et à la caméra de votre appareil par d'autres applications. Sovara ne nécessite aucune connexion internet et n'envoie absolument rien en dehors de votre appareil.</p>
+  <p>Il n'y a aucun serveur backend, aucun stockage cloud, aucune analytique, aucun reporting de crash, et aucun réseau publicitaire.</p>
 
   <h2>2. Données stockées</h2>
   <p>Sovara stocke les données suivantes exclusivement sur votre appareil :</p>
@@ -158,13 +161,15 @@
     <li>Durée de chaque événement d'accès</li>
     <li>Vos paramètres et préférences dans l'application</li>
   </ul>
+  <p>Ces données ne sont jamais transmises où que ce soit. Elles existent uniquement sur votre appareil et sont entièrement sous votre contrôle.</p>
 
   <h2>3. Données NON collectées</h2>
   <ul>
-    <li>Aucun audio n'est enregistré</li>
-    <li>Aucune photo ou vidéo n'est capturée</li>
+    <li>Aucun audio n'est enregistré — jamais</li>
+    <li>Aucune photo ou vidéo n'est capturée — jamais</li>
     <li>Aucune donnée de localisation</li>
     <li>Aucun identifiant d'appareil</li>
+    <li>Aucune statistique d'usage envoyée à un serveur</li>
     <li>Aucune information personnelle</li>
   </ul>
 
@@ -172,17 +177,18 @@
 
   <div class="perm">
     <div class="perm-name">RECORD_AUDIO</div>
-    <p>Utilisée uniquement pour détecter quand une autre application accède au microphone. Sovara n'enregistre, ne traite ni ne stocke aucun contenu audio.</p>
+    <p>Utilisée <strong>exclusivement pour détecter QUAND une autre application accède au microphone</strong>. Sovara n'ouvre jamais de flux d'enregistrement audio, ne capture aucune donnée audio, et ne traite aucun contenu audio. Nous utilisons cette permission uniquement pour interroger le système sur l'état d'activité du microphone.</p>
+    <p>Vous pouvez le vérifier de façon indépendante : l'APK de Sovara ne contient aucun appel à <code>MediaRecorder.start()</code>, <code>AudioRecord.read()</code>, ni à aucune méthode de capture audio. Cette permission est requise par Android car interroger l'état du microphone depuis un service en arrière-plan relève des permissions audio, même lorsqu'aucun audio n'est capturé.</p>
   </div>
 
   <div class="perm">
     <div class="perm-name">PACKAGE_USAGE_STATS</div>
-    <p>Optionnelle. Utilisée pour identifier quelle application était au premier plan lors d'un accès au microphone ou à la caméra. Doit être accordée manuellement dans les paramètres système Android. Sovara fonctionne sans elle.</p>
+    <p>Optionnelle. Utilisée pour identifier quelle application était au premier plan lors d'un accès au microphone ou à la caméra. Doit être accordée manuellement dans les paramètres système Android. Sovara fonctionne sans elle — les noms d'application peuvent simplement apparaître comme inconnus.</p>
   </div>
 
   <div class="perm">
     <div class="perm-name">FOREGROUND_SERVICE / FOREGROUND_SERVICE_MICROPHONE</div>
-    <p>Requise pour faire fonctionner le service de surveillance en arrière-plan en continu.</p>
+    <p>Requise pour faire fonctionner le service de surveillance en arrière-plan en continu. Android exige une notification visible lorsqu'un service en avant-plan est actif.</p>
   </div>
 
   <div class="perm">
@@ -200,8 +206,13 @@
     <p>Utilisée pour redémarrer automatiquement le service de surveillance après un redémarrage de l'appareil.</p>
   </div>
 
+  <div class="perm">
+    <div class="perm-name">VIBRATE</div>
+    <p>Utilisée pour faire vibrer l'appareil dans le cadre des notifications d'alerte.</p>
+  </div>
+
   <h2>5. Aucun service tiers</h2>
-  <p>Sovara ne contient aucun SDK tiers transmettant des données à l'extérieur. Pas de Google Analytics, pas de Firebase, pas de Crashlytics, pas de réseau publicitaire.</p>
+  <p>Sovara ne contient aucun SDK tiers transmettant des données à l'extérieur. Pas de Google Analytics, pas de Firebase, pas de Crashlytics, pas de SDK Facebook, aucun réseau publicitaire.</p>
 
   <h2>6. Suppression des données</h2>
   <ul>
@@ -209,55 +220,83 @@
     <li>Désinstallation : Supprime toutes les données définitivement</li>
   </ul>
 
-  <h2>7. Contact</h2>
+  <h2>7. Enfants</h2>
+  <p>Sovara ne collecte aucune information personnelle de quelque utilisateur que ce soit, y compris les enfants.</p>
+
+  <h2>8. Contact</h2>
   <p>Pour toute question, contactez le développeur via la fiche Google Play Store.</p>
 </div>
 
 <!-- DEUTSCH -->
 <div id="tab-de" class="content">
-  <p style="color:#8b949e;margin-top:16px;font-size:0.85rem">Letzte Aktualisierung: April 2026</p>
+  <p style="color:#8b949e;margin-top:16px;font-size:0.85rem">Letzte Aktualisierung: 4. Mai 2026 — alle Crash-Reporting- und Drittanbieter-SDKs entfernt</p>
 
   <div class="highlight">Sovara funktioniert 100% offline. Es wird keine Internetverbindung verwendet. Kein Konto erforderlich. Kein Server. Keine Cloud. Ihre Daten verlassen niemals Ihr Gerät.</div>
 
   <h2>1. Übersicht</h2>
   <p>Sovara ist eine lokale Android-App, die den Zugriff anderer Anwendungen auf das Mikrofon und die Kamera Ihres Geräts überwacht. Sovara benötigt keine Internetverbindung und sendet absolut nichts außerhalb Ihres Geräts.</p>
+  <p>Es gibt keinen Backend-Server, keinen Cloud-Speicher, keine Analyse, kein Crash-Reporting und kein Werbenetzwerk.</p>
 
   <h2>2. Gespeicherte Daten</h2>
+  <p>Sovara speichert die folgenden Daten ausschließlich auf Ihrem Gerät:</p>
   <ul>
     <li>Zeitstempel der Mikrofon- und Kamerazugriffsereignisse</li>
     <li>Name und Paketkennung der auslösenden Anwendung (nur mit optionaler Nutzungszugriffsberechtigung)</li>
     <li>Dauer jedes Zugriffsereignisses</li>
     <li>Ihre App-Einstellungen und Präferenzen</li>
   </ul>
+  <p>Diese Daten werden niemals irgendwohin übertragen. Sie existieren nur auf Ihrem Gerät und stehen vollständig unter Ihrer Kontrolle.</p>
 
   <h2>3. NICHT gesammelte Daten</h2>
   <ul>
-    <li>Kein Audio wird aufgezeichnet</li>
-    <li>Keine Fotos oder Videos werden aufgenommen</li>
+    <li>Es wird kein Audio aufgezeichnet — niemals</li>
+    <li>Es werden keine Fotos oder Videos aufgenommen — niemals</li>
     <li>Keine Standortdaten</li>
     <li>Keine Gerätekennungen</li>
-    <li>Keine persönlichen Informationen</li>
+    <li>Keine Nutzungsstatistiken werden an einen Server gesendet</li>
+    <li>Keine persönlichen Informationen jeglicher Art</li>
   </ul>
 
   <h2>4. Verwendete Berechtigungen</h2>
 
   <div class="perm">
     <div class="perm-name">RECORD_AUDIO</div>
-    <p>Wird nur verwendet, um zu erkennen, wann eine andere Anwendung auf das Mikrofon zugreift. Sovara zeichnet keine Audioinhalte auf.</p>
+    <p>Wird <strong>ausschließlich verwendet, um zu erkennen, WANN eine andere Anwendung auf das Mikrofon zugreift</strong>. Sovara öffnet niemals einen Audio-Aufnahmestream, erfasst keine Audiodaten und verarbeitet keine Audioinhalte. Wir verwenden diese Berechtigung ausschließlich, um das System nach dem Aktivitätsstatus des Mikrofons abzufragen.</p>
+    <p>Sie können dies unabhängig überprüfen: Das APK von Sovara enthält keine Aufrufe von <code>MediaRecorder.start()</code>, <code>AudioRecord.read()</code> oder einer anderen Audio-Erfassungsmethode. Die Berechtigung wird von Android benötigt, weil das Abfragen des Mikrofonstatus aus einem Hintergrunddienst unter Audio-Berechtigungen fällt — auch wenn kein Audio erfasst wird.</p>
   </div>
 
   <div class="perm">
     <div class="perm-name">PACKAGE_USAGE_STATS</div>
-    <p>Optional. Wird verwendet, um zu identifizieren, welche Anwendung im Vordergrund war. Muss manuell in den Android-Systemeinstellungen erteilt werden.</p>
+    <p>Optional. Wird verwendet, um zu identifizieren, welche Anwendung beim Mikrofon- oder Kamerazugriff im Vordergrund war. Muss manuell in den Android-Systemeinstellungen erteilt werden. Sovara funktioniert auch ohne — App-Namen erscheinen dann eventuell als unbekannt.</p>
+  </div>
+
+  <div class="perm">
+    <div class="perm-name">FOREGROUND_SERVICE / FOREGROUND_SERVICE_MICROPHONE</div>
+    <p>Erforderlich, um den Überwachungsdienst kontinuierlich im Hintergrund auszuführen. Android verlangt eine sichtbare Benachrichtigung, wenn ein Vordergrunddienst aktiv ist.</p>
   </div>
 
   <div class="perm">
     <div class="perm-name">Kameraüberwachung — keine CAMERA-Berechtigung erforderlich</div>
-    <p>Sovara überwacht die Kameranutzung über die Android-System-API <code>CameraManager.AvailabilityCallback</code>. Sovara fordert die CAMERA-Berechtigung NICHT an und nimmt niemals Bilder oder Videos auf.</p>
+    <p>Sovara überwacht die Kameranutzung über die Android-System-API <code>CameraManager.AvailabilityCallback</code>. Diese API benachrichtigt, wenn eine Kamera verfügbar oder nicht verfügbar wird (d. h. in Verwendung). Sovara fordert die CAMERA-Berechtigung NICHT an und nimmt niemals Bilder oder Videos auf.</p>
+  </div>
+
+  <div class="perm">
+    <div class="perm-name">POST_NOTIFICATIONS</div>
+    <p>Wird verwendet, um Echtzeitwarnungen anzuzeigen, wenn ein Mikrofon- oder Kamerazugriff erkannt wird.</p>
+  </div>
+
+  <div class="perm">
+    <div class="perm-name">RECEIVE_BOOT_COMPLETED</div>
+    <p>Wird verwendet, um den Überwachungsdienst nach einem Geräteneustart automatisch neu zu starten.</p>
+  </div>
+
+  <div class="perm">
+    <div class="perm-name">VIBRATE</div>
+    <p>Wird verwendet, um das Gerät als Teil der Warnbenachrichtigungen vibrieren zu lassen.</p>
   </div>
 
   <h2>5. Keine Drittanbieterdienste</h2>
-  <p>Sovara enthält keine Drittanbieter-SDKs, die Daten extern übertragen. Kein Google Analytics, kein Firebase, kein Werbenetzwerk.</p>
+  <p>Sovara enthält keine Drittanbieter-SDKs, die Daten extern übertragen. Kein Google Analytics, kein Firebase, kein Crashlytics, kein Facebook SDK, kein Werbenetzwerk jeglicher Art.</p>
 
   <h2>6. Datenlöschung</h2>
   <ul>
@@ -265,33 +304,40 @@
     <li>Deinstallation: Entfernt alle Daten dauerhaft</li>
   </ul>
 
-  <h2>7. Kontakt</h2>
+  <h2>7. Kinder</h2>
+  <p>Sovara erhebt keine personenbezogenen Daten von Nutzern, einschließlich Kindern.</p>
+
+  <h2>8. Kontakt</h2>
   <p>Bei Fragen wenden Sie sich über die Google Play Store-Seite an den Entwickler.</p>
 </div>
 
 <!-- ESPAÑOL -->
 <div id="tab-es" class="content">
-  <p style="color:#8b949e;margin-top:16px;font-size:0.85rem">Última actualización: abril 2026</p>
+  <p style="color:#8b949e;margin-top:16px;font-size:0.85rem">Última actualización: 4 de mayo de 2026 — eliminación de todo reporte de fallos y SDKs de terceros</p>
 
   <div class="highlight">Sovara funciona 100% sin conexión. No se utiliza ninguna conexión a internet. No se requiere cuenta. Sin servidor. Sin nube. Sus datos nunca abandonan su dispositivo.</div>
 
   <h2>1. Descripción general</h2>
-  <p>Sovara es una aplicación Android local que monitoriza el acceso de otras aplicaciones al micrófono y la cámara de su dispositivo. Sovara no requiere conexión a internet y no envía nada fuera de su dispositivo.</p>
+  <p>Sovara es una aplicación Android local que monitoriza el acceso de otras aplicaciones al micrófono y la cámara de su dispositivo. Sovara no requiere conexión a internet y no envía absolutamente nada fuera de su dispositivo.</p>
+  <p>No hay servidor backend, ni almacenamiento en la nube, ni analítica, ni reporte de fallos, ni red publicitaria.</p>
 
   <h2>2. Datos almacenados</h2>
+  <p>Sovara almacena los siguientes datos exclusivamente en su dispositivo:</p>
   <ul>
     <li>Marcas de tiempo de los eventos de acceso al micrófono y la cámara</li>
-    <li>Nombre e identificador del paquete de la aplicación (solo con permiso de acceso de uso opcional)</li>
+    <li>Nombre e identificador del paquete de la aplicación que activó el evento (solo si concede el permiso opcional de Acceso de Uso)</li>
     <li>Duración de cada evento de acceso</li>
     <li>Sus configuraciones y preferencias en la aplicación</li>
   </ul>
+  <p>Estos datos nunca se transmiten a ningún lugar. Existen únicamente en su dispositivo y están totalmente bajo su control.</p>
 
   <h2>3. Datos NO recopilados</h2>
   <ul>
-    <li>No se graba ningún audio</li>
-    <li>No se capturan fotos ni videos</li>
+    <li>No se graba ningún audio — nunca</li>
+    <li>No se capturan fotos ni videos — nunca</li>
     <li>Sin datos de ubicación</li>
     <li>Sin identificadores de dispositivo</li>
+    <li>Sin estadísticas de uso enviadas a ningún servidor</li>
     <li>Sin información personal de ningún tipo</li>
   </ul>
 
@@ -299,21 +345,42 @@
 
   <div class="perm">
     <div class="perm-name">RECORD_AUDIO</div>
-    <p>Solo se usa para detectar cuándo otra aplicación accede al micrófono. Sovara nunca graba contenido de audio.</p>
+    <p>Utilizado <strong>exclusivamente para detectar CUÁNDO otra aplicación está accediendo al micrófono</strong>. Sovara nunca abre un flujo de grabación de audio, nunca captura datos de audio y nunca procesa contenido de audio. Usamos este permiso únicamente para consultar al sistema sobre el estado de actividad del micrófono.</p>
+    <p>Puede verificarlo de forma independiente: el APK de Sovara no contiene llamadas a <code>MediaRecorder.start()</code>, <code>AudioRecord.read()</code> ni a ningún método de captura de audio. Android requiere este permiso porque consultar el estado del micrófono desde un servicio en segundo plano queda bajo los permisos de audio, incluso cuando no se captura ningún audio.</p>
   </div>
 
   <div class="perm">
     <div class="perm-name">PACKAGE_USAGE_STATS</div>
-    <p>Opcional. Se usa para identificar qué aplicación estaba en primer plano. Debe concederse manualmente en la configuración del sistema Android.</p>
+    <p>Opcional. Se usa para identificar qué aplicación estaba en primer plano cuando ocurrió un acceso al micrófono o la cámara. Debe concederse manualmente en la configuración del sistema Android. Sovara funciona sin él — los nombres de aplicación pueden simplemente aparecer como desconocidos.</p>
+  </div>
+
+  <div class="perm">
+    <div class="perm-name">FOREGROUND_SERVICE / FOREGROUND_SERVICE_MICROPHONE</div>
+    <p>Requerido para ejecutar el servicio de monitoreo continuamente en segundo plano. Android requiere una notificación visible cuando un servicio en primer plano está activo.</p>
   </div>
 
   <div class="perm">
     <div class="perm-name">Monitoreo de cámara — sin permiso CAMERA</div>
-    <p>Sovara monitoriza el uso de la cámara mediante la API del sistema Android <code>CameraManager.AvailabilityCallback</code>. Sovara NO solicita el permiso CAMERA y nunca captura imágenes ni videos.</p>
+    <p>Sovara monitoriza el uso de la cámara mediante la API del sistema Android <code>CameraManager.AvailabilityCallback</code>. Esta API notifica cuando una cámara está disponible o no disponible (es decir, en uso). Sovara NO solicita el permiso CAMERA y nunca captura imágenes ni videos.</p>
+  </div>
+
+  <div class="perm">
+    <div class="perm-name">POST_NOTIFICATIONS</div>
+    <p>Se usa para mostrar alertas en tiempo real cuando se detecta un acceso al micrófono o la cámara.</p>
+  </div>
+
+  <div class="perm">
+    <div class="perm-name">RECEIVE_BOOT_COMPLETED</div>
+    <p>Se usa para reiniciar automáticamente el servicio de monitoreo después de reiniciar el dispositivo.</p>
+  </div>
+
+  <div class="perm">
+    <div class="perm-name">VIBRATE</div>
+    <p>Se usa para hacer vibrar el dispositivo como parte de las notificaciones de alerta.</p>
   </div>
 
   <h2>5. Sin servicios de terceros</h2>
-  <p>Sovara no contiene SDKs de terceros que transmitan datos externamente. Sin Google Analytics, sin Firebase, sin red publicitaria.</p>
+  <p>Sovara no contiene ningún SDK de terceros que transmita datos al exterior. Sin Google Analytics, sin Firebase, sin Crashlytics, sin SDK de Facebook, sin red publicitaria de ningún tipo.</p>
 
   <h2>6. Eliminación de datos</h2>
   <ul>
@@ -321,33 +388,40 @@
     <li>Desinstalación: Elimina todos los datos permanentemente</li>
   </ul>
 
-  <h2>7. Contacto</h2>
+  <h2>7. Niños</h2>
+  <p>Sovara no recopila información personal de ningún usuario, incluidos los niños.</p>
+
+  <h2>8. Contacto</h2>
   <p>Para cualquier pregunta, contacte al desarrollador a través de la página de Google Play Store.</p>
 </div>
 
 <!-- ARABIC -->
 <div id="tab-ar" class="content" dir="rtl">
-  <p style="color:#8b949e;margin-top:16px;font-size:0.85rem">آخر تحديث: أبريل 2026</p>
+  <p style="color:#8b949e;margin-top:16px;font-size:0.85rem">آخر تحديث: 4 مايو 2026 — إزالة جميع تقارير الأعطال وحزم SDK الخارجية</p>
 
   <div class="highlight">تعمل سوفارا بنسبة 100% دون اتصال بالإنترنت. لا يتم استخدام أي اتصال بالإنترنت. لا حساب مطلوب. لا خادم. لا سحابة. بياناتك لا تغادر جهازك أبداً.</div>
 
   <h2>1. نظرة عامة</h2>
   <p>سوفارا هو تطبيق Android محلي يراقب وصول التطبيقات الأخرى إلى الميكروفون والكاميرا في جهازك. لا تحتاج سوفارا إلى اتصال بالإنترنت ولا ترسل أي شيء خارج جهازك.</p>
+  <p>لا يوجد خادم خلفي، ولا تخزين سحابي، ولا تحليلات، ولا تقارير أعطال، ولا شبكة إعلانات.</p>
 
   <h2>2. البيانات المخزنة</h2>
+  <p>تخزّن سوفارا البيانات التالية حصرياً على جهازك:</p>
   <ul>
     <li>طوابع زمنية لأحداث الوصول إلى الميكروفون والكاميرا</li>
     <li>اسم ومعرف حزمة التطبيق المشغِّل (فقط عند منح إذن الوصول للاستخدام الاختياري)</li>
     <li>مدة كل حدث وصول</li>
     <li>إعداداتك وتفضيلاتك داخل التطبيق</li>
   </ul>
+  <p>لا يتم نقل هذه البيانات إلى أي مكان. توجد فقط على جهازك وتحت سيطرتك الكاملة.</p>
 
   <h2>3. البيانات غير المجمعة</h2>
   <ul>
-    <li>لا يتم تسجيل أي صوت</li>
-    <li>لا يتم التقاط أي صور أو مقاطع فيديو</li>
+    <li>لا يتم تسجيل أي صوت — أبداً</li>
+    <li>لا يتم التقاط أي صور أو مقاطع فيديو — أبداً</li>
     <li>لا بيانات موقع</li>
     <li>لا معرفات أجهزة</li>
+    <li>لا إحصاءات استخدام تُرسل إلى أي خادم</li>
     <li>لا معلومات شخصية من أي نوع</li>
   </ul>
 
@@ -355,17 +429,23 @@
 
   <div class="perm">
     <div class="perm-name">RECORD_AUDIO</div>
-    <p>تُستخدم فقط للكشف عن وصول تطبيق آخر إلى الميكروفون. لا تسجل سوفارا أي محتوى صوتي.</p>
+    <p>يُستخدم <strong>حصرياً للكشف عن وقت وصول تطبيق آخر إلى الميكروفون</strong>. لا تفتح سوفارا أبداً أي تدفق لتسجيل الصوت، ولا تلتقط بيانات صوتية، ولا تعالج أي محتوى صوتي. نستخدم هذا الإذن فقط للاستعلام من النظام عن حالة نشاط الميكروفون.</p>
+    <p>يمكنك التحقق من ذلك بشكل مستقل: لا يحتوي ملف APK الخاص بسوفارا على أي استدعاءات لـ <code>MediaRecorder.start()</code> أو <code>AudioRecord.read()</code> أو أي طريقة لالتقاط الصوت. يطلب Android هذا الإذن لأن الاستعلام عن حالة الميكروفون من خدمة في الخلفية يندرج تحت أذونات الصوت، حتى عندما لا يتم التقاط أي صوت.</p>
   </div>
 
   <div class="perm">
     <div class="perm-name">PACKAGE_USAGE_STATS</div>
-    <p>اختياري. يُستخدم لتحديد التطبيق الذي كان في المقدمة عند حدوث الوصول. يجب منحه يدوياً في إعدادات نظام Android.</p>
+    <p>اختياري. يُستخدم لتحديد التطبيق الذي كان في المقدمة عند حدوث الوصول إلى الميكروفون أو الكاميرا. يجب منحه يدوياً في إعدادات نظام Android. تعمل سوفارا بدونه — قد تظهر أسماء التطبيقات كغير معروفة فقط.</p>
+  </div>
+
+  <div class="perm">
+    <div class="perm-name">FOREGROUND_SERVICE / FOREGROUND_SERVICE_MICROPHONE</div>
+    <p>مطلوب لتشغيل خدمة المراقبة بشكل مستمر في الخلفية. يتطلب Android إشعاراً مرئياً عندما تكون خدمة المقدمة نشطة.</p>
   </div>
 
   <div class="perm">
     <div class="perm-name">مراقبة الكاميرا — دون إذن CAMERA</div>
-    <p>تراقب سوفارا استخدام الكاميرا عبر واجهة برمجة نظام Android <code>CameraManager.AvailabilityCallback</code>. لا تطلب سوفارا إذن CAMERA ولا تلتقط أي صور أو مقاطع فيديو.</p>
+    <p>تراقب سوفارا استخدام الكاميرا عبر واجهة برمجة نظام Android <code>CameraManager.AvailabilityCallback</code>. تُخطر هذه الواجهة عندما تصبح أي كاميرا متاحة أو غير متاحة (أي قيد الاستخدام). لا تطلب سوفارا إذن CAMERA ولا تلتقط أي صور أو مقاطع فيديو.</p>
   </div>
 
   <div class="perm">
@@ -373,8 +453,18 @@
     <p>تُستخدم لعرض تنبيهات فورية عند الكشف عن وصول إلى الميكروفون أو الكاميرا.</p>
   </div>
 
+  <div class="perm">
+    <div class="perm-name">RECEIVE_BOOT_COMPLETED</div>
+    <p>تُستخدم لإعادة تشغيل خدمة المراقبة تلقائياً بعد إعادة تشغيل الجهاز.</p>
+  </div>
+
+  <div class="perm">
+    <div class="perm-name">VIBRATE</div>
+    <p>تُستخدم لاهتزاز الجهاز كجزء من تنبيهات الإشعارات.</p>
+  </div>
+
   <h2>5. لا خدمات طرف ثالث</h2>
-  <p>لا تحتوي سوفارا على أي حزم SDK خارجية تنقل البيانات. لا Google Analytics، لا Firebase، لا شبكة إعلانات.</p>
+  <p>لا تحتوي سوفارا على أي حزم SDK خارجية تنقل البيانات. لا Google Analytics، لا Firebase، لا Crashlytics، لا Facebook SDK، لا شبكة إعلانات من أي نوع.</p>
 
   <h2>6. حذف البيانات</h2>
   <ul>
@@ -382,7 +472,10 @@
     <li>إلغاء التثبيت: يحذف جميع البيانات نهائياً</li>
   </ul>
 
-  <h2>7. التواصل</h2>
+  <h2>7. الأطفال</h2>
+  <p>لا تجمع سوفارا أي معلومات شخصية من أي مستخدم، بمن فيهم الأطفال.</p>
+
+  <h2>8. التواصل</h2>
   <p>لأي استفسار، تواصل مع المطور عبر صفحة Google Play Store.</p>
 </div>
 
@@ -391,11 +484,11 @@
 </footer>
 
 <script>
-function showTab(lang) {
+function showTab(lang, evt) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
   document.getElementById('tab-' + lang).classList.add('active');
-  event.target.classList.add('active');
+  if (evt && evt.target) evt.target.classList.add('active');
 }
 </script>
 </body>
